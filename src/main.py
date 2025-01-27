@@ -26,16 +26,21 @@ class MyWindow(arcade.View):
 
         self.menu_button = arcade.gui.UIFlatButton(x=25, y=WINDOW_HEIGHT - 75, width=50, height=50, text='=')
         self.manager.add(self.menu_button)
+        self.menu_button.on_click = self.on_click_menu
 
         particle_list = [] 
-
 
         pass
 
     def reset(self):
 
         pass
-\
+
+
+    def on_click_menu(self, event):
+        print(f'menu, {event}')
+        
+
     def on_draw(self):
 
         self.clear()
