@@ -1,6 +1,9 @@
 import arcade 
 import arcade.csscolor
 import arcade.csscolor
+import arcade.csscolor
+import arcade.csscolor
+import arcade.csscolor
 import arcade.gui
 from particle import Particle
 import tkinter as tk 
@@ -27,13 +30,17 @@ class SimulationWindow(arcade.View):
         self.reveal_button = arcade.gui.UIFlatButton(x=25, y=WINDOW_HEIGHT - 75, width=50, height=50, text='=')
         self.manager.add(self.reveal_button)
 
-        # assign on_click_menu function to the button
+        self.simulate_button = arcade.gui.UIFlatButton(x=WINDOW_WIDTH - 75, y=WINDOW_HEIGHT -75, width=50, height=50)
+        self.manager.add(self.simulate_button)
+
+        # assign functions to the buttons
         self.reveal_button.on_click = self.on_click_reveal
+        self.simulate_button.on_click = self.start_simulation
 
         # holds the id of most recently selcted selectable item to be added to simulation 
-        currently_selected = None 
+        self.currently_selected = None 
 
-        particle_list = [] 
+        self.particle_list = [] 
 
 
         pass
@@ -46,7 +53,7 @@ class SimulationWindow(arcade.View):
     def on_click_reveal(self, event):
         ''' menu for selectable items revealed '''
 
-        print(event)
+
 
         self.manager.remove(self.reveal_button)
 
@@ -59,28 +66,47 @@ class SimulationWindow(arcade.View):
             # box containing the selectable options for the simualtor 
             self.select_box = arcade.gui.widgets.UIBoxLayout(space_between = 20)
 
-            particle_button = arcade.gui.widgets.UIFlatButton(text='particle')
+            particle_button = arcade.gui.widgets.UIFlatButton(text='particle', width=150)
             self.select_box.add(particle_button)
-            return_button = arcade.gui.widgets.UIFlatButton(text='return')
+            return_button = arcade.gui.widgets.UIFlatButton(text='return', width=150)
             self.select_box.add(return_button)
 
             particle_button.on_click = self.on_click_particle
             return_button.on_click = self.on_click_return
 
             # create widget to hold the select box
-            self.select_anchor_layout = arcade.gui.UIAnchorWidget(child=self.select_box, anchor_x='left', anchor_y='top', align_x=25, align_y=-25)
-            self.select_anchor_layout.add(child=self.select_box)
+            self.select_anchor_layout = arcade.gui.UIAnchorWidget(child=self.select_box, anchor_x='left', anchor_y='top',
+                                                                  align_y=-25, size_hint_min=100)
+            self.select_anchor_border = arcade.gui.UIBorder(child=self.select_anchor_layout)
 
-
+        self.manager.add(self.select_anchor_border)
         self.manager.add(self.select_anchor_layout)
 
 
     def on_click_particle(self, event): 
-        currently_selected = 'particle'
+        self.currently_selected = 'particle'
 
     def on_click_return(self, event):
+        self.manager.remove(self.select_anchor_border)
         self.manager.remove(self.select_anchor_layout)
         self.manager.add(self.reveal_button)
+
+
+    def on_mouse_press(self, x, y, button, key_modifiers):
+        
+        if self.currently_selected == 'particle':
+            
+            p = Particle(x, y, WINDOW_WIDTH, WINDOW_HEIGHT)
+            self.particle_list.append(p)
+
+            self.on_draw()
+
+
+
+
+    def on_key_press(self, symbol, modifiers):
+        pass
+
 
     def on_show_view(self):
         arcade.set_background_color(arcade.csscolor.BLACK)
@@ -88,10 +114,18 @@ class SimulationWindow(arcade.View):
     def on_draw(self):
 
         self.clear()
-
-        arcade.start_render()
         self.manager.draw()
+        for particle in self.particle_list:
+            particle.draw()
+
+        
+
+
+    def start_simulation(self, event): 
         pass
+
+
+
 
 
 class MenuView(arcade.View):
@@ -107,6 +141,7 @@ class MenuView(arcade.View):
     def on_mouse_press(self, x, y, button, modifiers):
         simulation_window = SimulationWindow()
         self.window.show_view(simulation_window)
+
 
 
 def main():
