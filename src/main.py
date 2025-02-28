@@ -1,12 +1,9 @@
 import arcade 
 import arcade.csscolor
-import arcade.csscolor
-import arcade.csscolor
-import arcade.csscolor
-import arcade.csscolor
 import arcade.gui
 from particle import Particle
 import tkinter as tk 
+import time
 
 WINDOW_TITLE = 'Physics Simulation'
 
@@ -39,6 +36,8 @@ class SimulationWindow(arcade.View):
 
         # holds the id of most recently selcted selectable item to be added to simulation 
         self.currently_selected = None 
+
+        self.simulation = False
 
         self.particle_list = [] 
 
@@ -118,12 +117,16 @@ class SimulationWindow(arcade.View):
         for particle in self.particle_list:
             particle.draw()
 
-        
+
+    def on_update(self, delta_time=1):
+
+        if self.simulation is True:
+            for particle in self.particle_list:
+                particle.move()
 
 
     def start_simulation(self, event): 
-        pass
-
+        self.simulation = True
 
 
 
