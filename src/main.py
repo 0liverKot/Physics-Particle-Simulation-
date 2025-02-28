@@ -42,7 +42,7 @@ class SimulationWindow(arcade.View):
         self.particle_list = [] 
 
 
-        pass
+        
 
     def reset(self):
 
